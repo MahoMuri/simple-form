@@ -1,7 +1,7 @@
 "use client";
 
 import { LoginForm } from "@/components/login/login-form";
-import { SignInForm } from "@/components/signin/signin-form";
+import { SignUpForm } from "@/components/signup/signup-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -17,11 +17,11 @@ export default function Home() {
               <Separator className="mt-2 mb-4" />
               <LoginForm />
             </div>
-            <Separator orientation="vertical" className="!h-52 my-auto" />
+            <Separator orientation="vertical" className="!h-52 my-auto mx-4" />
             <div className="basis-1/2">
-              <h2>Sign in</h2>
+              <h2>Sign Up</h2>
               <Separator className="mt-2 mb-4" />
-              <SignInForm />
+              <SignUpForm />
             </div>
           </div>
         </CardContent>

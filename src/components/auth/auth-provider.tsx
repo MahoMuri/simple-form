@@ -1,9 +1,8 @@
 "use client";
 
-import { onIdTokenChanged } from "@/lib/firebase/auth";
-import { deleteCookie, setCookie } from "cookies-next";
+import { onAuthStateChanged } from "@/lib/firebase/auth";
 import { User } from "firebase/auth";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // interface AuthContextProps {
 //   user: User | null;
@@ -12,44 +11,28 @@ import { createContext, useContext, useEffect } from "react";
 
 const AuthContext = createContext({} as User | null);
 
-function useUserSession(initialUser: User | null) {
-  useEffect(() => {
-    return onIdTokenChanged(async (user) => {
-      if (user) {
-        const idToken = await user.getIdToken();
-        await setCookie("__session", idToken);
-      } else {
-        await deleteCookie("__session");
-      }
-      if (initialUser?.uid === user?.uid) {
-        return;
-      }
-    });
-  }, [initialUser]);
+function AuthProvider({ children }: { children: React.ReactNode }) {
+    const [user, setUser] = useState<User | null>(null);
 
-  return initialUser;
+    useEffect(() => {
+        return onAuthStateChanged((user) => {
+            if (user) {
+                setUser(user);
+                return;
+            }
+            setUser(null);
+        });
+    }, []);
+
+    return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 }
 
-function AuthProvider({
-  currentUser,
-  children,
-}: {
-  currentUser: User;
-  children: React.ReactNode;
-}) {
-  useUserSession(currentUser);
-
-  return (
-    <AuthContext.Provider value={currentUser}>{children}</AuthContext.Provider>
-  );
+function useAuth() {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within a AuthProvider");
+    }
+    return context;
 }
-
-const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within a AuthProvider");
-  }
-  return context;
-};
 
 export { AuthContext, AuthProvider, useAuth };

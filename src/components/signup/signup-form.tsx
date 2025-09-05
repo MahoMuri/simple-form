@@ -26,7 +26,7 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-export function SignInForm() {
+export function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,9 +46,6 @@ export function SignInForm() {
       toast("🎉 Sign in successful!");
       console.log(user);
     }
-    // console.log(
-    //   `Email: ${values.email}\nPassword: ${values.password}\nConfirm Password: ${values.confirmPassword}`
-    // );
   }
 
   return (
@@ -103,7 +100,7 @@ export function SignInForm() {
           )}
         />
 
-        <Button type="submit">Sign In</Button>
+        <Button type="submit">Sign Up</Button>
       </form>
     </Form>
   );
