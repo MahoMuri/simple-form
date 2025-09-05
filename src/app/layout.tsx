@@ -1,8 +1,11 @@
-import type { Metadata } from "next";
-import { Poppins, IBM_Plex_Mono } from "next/font/google";
-import "./globals.css";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { getAuthenticatedAppForUser } from "@/lib/firebase/server";
+import { User } from "firebase/auth";
+import type { Metadata } from "next";
+import { IBM_Plex_Mono, Poppins } from "next/font/google";
 import { Toaster } from "sonner";
+import "./globals.css";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -21,11 +24,12 @@ export const metadata: Metadata = {
   description: "Create by MahoMuri",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { currentUser } = await getAuthenticatedAppForUser();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -38,7 +42,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="min-h-dvh flex flex-col items-center justify-center">
-            {children}
+            <AuthProvider currentUser={currentUser?.toJSON() as User}>
+              {children}
+            </AuthProvider>
           </main>
           <Toaster />
         </ThemeProvider>
